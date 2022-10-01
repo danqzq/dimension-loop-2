@@ -1,0 +1,20 @@
+{
+    "name": "Dan",
+    "rootNamespace": "Dan",
+    "references": [
+        "GUID:d69e0fd9a74c2aa4c9c6328dfae38584",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:b84cf0863fb105f47a726476f8d80bd8",
+        "GUID:4307f53044263cf4b835bd812fc161a4",
+        "GUID:d60799ab2a985554ea1a39cd38695018"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
