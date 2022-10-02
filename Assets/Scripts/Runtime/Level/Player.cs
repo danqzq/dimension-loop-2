@@ -1,30 +1,54 @@
 using System;
+using DG.Tweening;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Dan.Level
 {
     public class Player : MonoBehaviour
     {
+        [SerializeField] private int _health;
+        [SerializeField] private GameObject[] _healthObjects;
+        
         [SerializeField] private float _delayBetweenShots = 0.25f;
         [SerializeField] private float _shootRange = 5f, _shootForce = 100f;
         
-        public float LastTeleportTime { get; set; }
+        [SerializeField] private GameObject _collisionEffect;
 
-        private float _lastShotTime;
+        private static Player _instance;
+        
+        public float LastTeleportTime { get; private set; }
+        
+        public bool CanTeleport { get; set; }
+
+        private float _lastShotTime, _lastHitTime;
 
         private Vector2? _touchPosition, _liftPosition;
 
         private Rigidbody2D _rb;
         private LineRenderer _lr;
+        private TrailRenderer _trail;
+        private SpriteRenderer _sr;
         
         private Camera _camera;
+        
+        public bool ShouldNotTouchBox { get; set; }
+
+        private void Awake()
+        {
+            _instance = this;
+            _health = 5;
+        }
 
         private void Start()
         {
             _rb = GetComponent<Rigidbody2D>();
             _lr = GetComponentInChildren<LineRenderer>();
+            _trail = GetComponentInChildren<TrailRenderer>();
+            _sr = GetComponent<SpriteRenderer>();
             
             _camera = Camera.main;
+            CanTeleport = true;
         }
 
         public void OnPointerDown()
@@ -50,7 +74,8 @@ namespace Dan.Level
         
         private void Update()
         {
-            var position = transform.position;
+            var t = transform;
+            var position = t.position;
             position.z = 0;
             _lr.SetPosition(0, position);
             if (_touchPosition.HasValue)
@@ -64,13 +89,67 @@ namespace Dan.Level
             {
                 _lr.SetPosition(1, position);
             }
+            
+            if (Mathf.Abs(position.x) > 7)
+                t.position = new Vector3(0, position.y);
+            if (Mathf.Abs(position.y) > 7)
+                t.position = new Vector3(position.x, 0);
         }
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (other.gameObject.CompareTag("Box") && _rb.velocity.magnitude > 4)
+            if (!other.gameObject.CompareTag("Box") || _rb.velocity.magnitude < 5) return;
+
+            GameManager.Obj.HitBox(out var color);
+            CameraShake.StartShake(1f, 0.5f);
+            var effect = Instantiate(_collisionEffect, other.GetContact(0).point, Quaternion.identity);
+            var main = effect.GetComponent<ParticleSystem>().main;
+            main.startColor = color;
+            Destroy(effect, 1f);
+            
+            if (ShouldNotTouchBox)
+                TakeDamage();
+        }
+
+        private void OnTriggerEnter2D(Collider2D other)
+        {
+            if (other.gameObject.CompareTag("Spear"))
             {
-                GameManager.Obj.HitBox();
+                TakeDamage();
+            }
+        }
+
+        public void Teleport(Vector2 position)
+        {
+            transform.position = position;
+            LastTeleportTime = Time.time;
+            _trail.Clear();
+            SFXManager.Play("teleport");
+        }
+        
+        public static void TakeDamage()
+        {
+            _instance.TakeDamageInternal();
+        }
+        
+        public void TakeDamageInternal()
+        {
+            if (Time.time - _lastHitTime < 1f) return;
+            _health--;
+            for (int i = 0; i < _healthObjects.Length; i++) 
+                _healthObjects[i].SetActive(i < _health);
+            
+            CameraShake.StartShake(1f, 0.5f);
+            SFXManager.Play("hit");
+
+            _sr.DOColor(Color.red, 0.2f).SetLoops(4, LoopType.Yoyo).OnComplete(() => _sr.DOColor(Color.white, 0.2f));
+            _lastHitTime = Time.time;
+            
+            if (_health <= 0)
+            {
+                GameManager.Obj.GameOver();
+                _sr.enabled = false;
+                _trail.enabled = false;
             }
         }
     }

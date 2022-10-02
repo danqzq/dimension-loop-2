@@ -141,5 +141,24 @@ namespace Dan
             sprite.material.SetFloat(BlendAmount, value);
             sprite.material.DOFloat(0f, BlendAmount, duration).SetEase(Ease.InOutSine);
         }
+        
+        public static T Random<T>(this (T, T) tuple) => UnityEngine.Random.Range(0, 2) == 0 ? tuple.Item1 : tuple.Item2;
+        
+        public static void ForEach<T>(this IEnumerable<T> array, Action<T> action)
+        {
+            foreach (var item in array)
+            {
+                action?.Invoke(item);
+            }
+        }
+        
+        public static void ForEach<T>(this T[] array, Action<T, int> action)
+        {
+            for (var i = 0; i < array.Length; i++)
+            {
+                var item = array[i];
+                action?.Invoke(item, i);
+            }
+        }
     }
 }

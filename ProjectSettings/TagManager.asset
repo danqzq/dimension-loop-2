@@ -5,14 +5,15 @@ TagManager:
   serializedVersion: 2
   tags:
   - Box
+  - Spear
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - PostProcessing
   - Water
   - UI
-  - 
+  - Player
   - 
   - 
   - 
