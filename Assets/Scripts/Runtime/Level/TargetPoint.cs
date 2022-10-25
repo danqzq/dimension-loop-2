@@ -11,11 +11,6 @@ namespace Dan.Level
 
         private Action _onTargetReached;
 
-        private void Start()
-        {
-            
-        }
-
         public void Init(Action onTargetReached)
         {
             _onTargetReached = onTargetReached;
@@ -23,13 +18,10 @@ namespace Dan.Level
         
         private void OnTriggerEnter2D(Collider2D other)
         {
-            if (!IsActivated) return;
-            if (other.gameObject.CompareTag("Player"))
-            {
-                var particle = Instantiate(_particleEffect, transform.position, Quaternion.identity);
-                Destroy(particle, 5f);
-                _onTargetReached?.Invoke();
-            }
+            if (!IsActivated || !other.gameObject.CompareTag("Player")) return;
+            var particle = Instantiate(_particleEffect, transform.position, Quaternion.identity);
+            Destroy(particle, 5f);
+            _onTargetReached?.Invoke();
         }
     }
 }

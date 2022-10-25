@@ -17,6 +17,8 @@ namespace Dan
 
         public Transform content;
         public GameObject textPrefab;
+        
+        private const string PublicKey = "10d201510d00da915801c2ca7b56ef520a9c87a421451a63bc44dc6ca603804d";
 
         private void Start()
         {
@@ -26,8 +28,7 @@ namespace Dan
                 text.text = "You escaped the loop!";
             }
             fadeOut.DOFade(0f, 1f);
-            LeaderboardCreator.GetLeaderboard("10d201510d00da915801c2ca7b56ef520a9c87a421451a63bc44dc6ca603804d",
-                entries =>
+            LeaderboardCreator.GetLeaderboard(PublicKey, entries =>
                 {
                     foreach (Transform transform1 in content)
                     {
@@ -46,10 +47,9 @@ namespace Dan
             input.text = string.IsNullOrEmpty(input.text)
                 ? "Player" + Random.Range(0, 10000).ToString("0000")
                 : input.text;
-            LeaderboardCreator.UploadNewEntry("10d201510d00da915801c2ca7b56ef520a9c87a421451a63bc44dc6ca603804d", input.text, PlayerPrefs.GetInt("Score"), PlayerPrefs.GetString("Time", "00:00"), entries =>
+            LeaderboardCreator.UploadNewEntry(PublicKey, input.text, PlayerPrefs.GetInt("Score"), PlayerPrefs.GetString("Time", "00:00"), entries =>
             {
-                LeaderboardCreator.GetLeaderboard("10d201510d00da915801c2ca7b56ef520a9c87a421451a63bc44dc6ca603804d",
-                    e =>
+                LeaderboardCreator.GetLeaderboard(PublicKey, e =>
                     {
                         foreach (Transform transform1 in content)
                         {

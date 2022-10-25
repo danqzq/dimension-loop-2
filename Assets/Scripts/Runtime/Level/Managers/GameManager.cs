@@ -12,7 +12,7 @@ using Random = UnityEngine.Random;
 
 namespace Dan.Level
 {
-    [System.Serializable]
+    [Serializable]
     public class GameMode
     {
         public string name;

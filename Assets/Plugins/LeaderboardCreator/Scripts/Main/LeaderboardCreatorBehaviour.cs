@@ -68,6 +68,7 @@ namespace Dan.Main
             }
 
             onComplete.Invoke(true);
+            request.Dispose();
         }
 
         private static void HandleError(UnityWebRequest request)

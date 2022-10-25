@@ -1,7 +1,5 @@
-using System;
 using DG.Tweening;
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace Dan.Level
 {
@@ -90,10 +88,9 @@ namespace Dan.Level
                 _lr.SetPosition(1, position);
             }
             
-            if (Mathf.Abs(position.x) > 7)
-                t.position = new Vector3(0, position.y);
-            if (Mathf.Abs(position.y) > 7)
-                t.position = new Vector3(position.x, 0);
+            t.position = new Vector3(
+                Mathf.Abs(position.x) > 7 ? 0 : position.x,
+                Mathf.Abs(position.y) > 7 ? 0 : position.y);
         }
 
         private void OnCollisionEnter2D(Collision2D other)
@@ -132,10 +129,11 @@ namespace Dan.Level
             _instance.TakeDamageInternal();
         }
         
-        public void TakeDamageInternal()
+        private void TakeDamageInternal()
         {
             if (Time.time - _lastHitTime < 1f) return;
             _health--;
+            
             for (int i = 0; i < _healthObjects.Length; i++) 
                 _healthObjects[i].SetActive(i < _health);
             

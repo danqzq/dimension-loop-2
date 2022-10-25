@@ -1,5 +1,4 @@
-﻿using System;
-using DG.Tweening;
+﻿using DG.Tweening;
 using UnityEngine;
 
 namespace Dan.Level
@@ -22,14 +21,9 @@ namespace Dan.Level
 
         private void OnCollisionEnter2D(Collision2D other)
         {
-            if (other.gameObject.CompareTag("Player"))
-            {
-                Boss.TakeDamage();
-                _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(() =>
-                {
-                    _spriteRenderer.DOColor(Color.white, 0.1f);
-                });
-            }
+            if (!other.gameObject.CompareTag("Player")) return;
+            Boss.TakeDamage();
+            _spriteRenderer.DOColor(Color.red, 0.1f).OnComplete(() => _spriteRenderer.DOColor(Color.white, 0.1f));
         }
     }
 }

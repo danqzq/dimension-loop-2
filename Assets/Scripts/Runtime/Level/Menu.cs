@@ -25,10 +25,6 @@ namespace Dan
             PlayerPrefs.SetInt("Music", 1);
             PlayerPrefs.SetInt("SFX", 1);
         }
-        
-        private void Update()
-        {
-        }
 
         public void Play()
         {
