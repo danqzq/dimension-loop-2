@@ -29,17 +29,17 @@ namespace Dan
             }
             fadeOut.DOFade(0f, 1f);
             LeaderboardCreator.GetLeaderboard(PublicKey, entries =>
+            {
+                foreach (Transform t in content)
                 {
-                    foreach (Transform transform1 in content)
-                    {
-                        Destroy(transform1.gameObject);
-                    }
-                    foreach (var entry in entries)
-                    {
-                        var t = Instantiate(textPrefab, content);
-                        t.GetComponent<TextMeshProUGUI>().text = entry.Username + " : " + entry.Score + " - " + entry.Extra;
-                    }
-                });
+                    Destroy(t.gameObject);
+                }
+                foreach (var entry in entries)
+                {
+                    var t = Instantiate(textPrefab, content);
+                    t.GetComponent<TextMeshProUGUI>().text = entry.Username + " : " + entry.Score + " - " + entry.Extra;
+                }
+            });
         }
 
         public void UploadOwnScore()
@@ -47,24 +47,31 @@ namespace Dan
             input.text = string.IsNullOrEmpty(input.text)
                 ? "Player" + Random.Range(0, 10000).ToString("0000")
                 : input.text;
-            LeaderboardCreator.UploadNewEntry(PublicKey, input.text, PlayerPrefs.GetInt("Score"), PlayerPrefs.GetString("Time", "00:00"), entries =>
+            LeaderboardCreator.UploadNewEntry(PublicKey, input.text, PlayerPrefs.GetInt("Score"), PlayerPrefs.GetString("Time", "00:00"), isSuccessful =>
             {
+                if (!isSuccessful)
+                {
+                    text.text = "Failed to upload score!";
+                    return;
+                }
                 LeaderboardCreator.GetLeaderboard(PublicKey, e =>
+                {
+                    foreach (Transform t in content)
                     {
-                        foreach (Transform transform1 in content)
-                        {
-                            Destroy(transform1.gameObject);
-                        }
-                        foreach (var entry in e)
-                        {
-                            var t = Instantiate(textPrefab, content);
-                            t.GetComponent<TextMeshProUGUI>().text = entry.Username + " : " + entry.Score + " - " + entry.Extra;
-                        }
-                    });
+                        Destroy(t.gameObject);
+                    }
+                    foreach (var entry in e)
+                    {
+                        var t = Instantiate(textPrefab, content);
+                        t.GetComponent<TextMeshProUGUI>().text = entry.Username + " : " + entry.Score + " - " + entry.Extra;
+                    }
+                });
             });
         }
         
-        
-        public void FadeIn() => fadeIn.DOFade(1f, 1f).OnComplete(() => SceneManager.LoadScene("SampleScene"));
+        public void FadeIn()
+        {
+            fadeIn.DOFade(1f, 1f).OnComplete(() => SceneManager.LoadScene("SampleScene"));
+        }
     }
 }

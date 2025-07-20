@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Asynkrone.UnityTelegramGame.Networking;
 using DG.Tweening;
 using TMPro;
 using UnityEngine;
@@ -73,12 +74,12 @@ namespace Dan.Level
         {
             Obj = this;
             _modifierManager = GetComponent<ModifierManager>();
-            _portalManager = FindObjectOfType<PortalManager>();
+            _portalManager = FindFirstObjectByType<PortalManager>();
             
             _currentGameMode = _gameModes[0];
             _gameModesSet = new List<GameMode>(_gameModes[1..]);
             
-            _player = FindObjectOfType<Player>();
+            _player = FindFirstObjectByType<Player>();
 
             _fadeOut.DOFade(0f, 0.5f);
             
@@ -114,7 +115,7 @@ namespace Dan.Level
             }
             if (_score > 50)
             {
-                FindObjectOfType<Boss>(true).gameObject.SetActive(true);
+                FindFirstObjectByType<Boss>(FindObjectsInactive.Include).gameObject.SetActive(true);
             }
             this.DoAfter(3f, () => _waveTargetYPosition = _score);
         }
@@ -144,7 +145,7 @@ namespace Dan.Level
             t.transform.localEulerAngles = choice switch
             {
                 0 or 1 => new Vector3(0, 0, 0),
-                2 or _ => new Vector3(0, 0, 90),
+                _ => new Vector3(0, 0, 90),
             };
             (_currentTargetPoint = t.GetComponent<TargetPoint>()).Init(OnTargetPointReached);
             if (forceActivate) _currentTargetPoint.IsActivated = true;
@@ -282,6 +283,8 @@ namespace Dan.Level
                 var time = DateTime.Now - _timeSinceLevelStart;
                 PlayerPrefs.SetString("Time", time.ToString("mm\\:ss"));
             }
+            
+            TelegramManager.SendScore(_score);
 
             _fadeIn.DOFade(1f, 0.9f);
             StartCoroutine(SwitchScene());

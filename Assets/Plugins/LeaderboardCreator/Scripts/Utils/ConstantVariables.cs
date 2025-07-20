@@ -4,19 +4,23 @@ namespace Dan
 {
     internal static class ConstantVariables
     {
-        internal const int MaxExtraStringLength = 100;
+        internal const string GUID_KEY = "LEADERBOARD_CREATOR___LOCAL_GUID";
         
         internal static string GetServerURL(Routes route = Routes.None, string extra = "")
         {
-            return ServerURL + route switch
+            return SERVER_URL + route switch
             {
+                Routes.Authorize => "/authorize",
                 Routes.Get => "/get",
                 Routes.Upload => "/entry/upload",
-                Routes.Ping => "/ping",
+                Routes.UpdateUsername => "/entry/update-username",
+                Routes.DeleteEntry => "/entry/delete",
+                Routes.GetPersonalEntry => "/entry/get",
+                Routes.GetEntryCount => "/entry/count",
                 _ => "/"
             } + extra;
         }
 
-        private const string ServerURL = "https://lcv2-server.danqzq.games";
+        private const string SERVER_URL = "https://lcv2-server.danqzq.games";
     }
 }

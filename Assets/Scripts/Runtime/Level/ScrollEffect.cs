@@ -9,7 +9,7 @@ namespace Dan.Level
         
         private void Update()
         {
-            transform.localPosition += Vector3.left * _scrollSpeed * Time.deltaTime;
+            transform.localPosition += Vector3.left * (_scrollSpeed * Time.deltaTime);
             
             if (transform.localPosition.x >= _minX) return;
             
